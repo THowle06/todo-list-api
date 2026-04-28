@@ -1,9 +1,5 @@
-import dotenv from "dotenv";
 import app from "./app.js";
-
-dotenv.config();
-
-const port = process.env.PORT || 3000;
+import { port } from "./config/config.js";
 
 app.listen(port, () => {
     console.log(`Todo List API listening on http://localhost:${port}`);
