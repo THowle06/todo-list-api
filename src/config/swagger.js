@@ -1,3 +1,4 @@
+import path from "node:path";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
@@ -10,7 +11,7 @@ const options = {
             description: "A RESTful API to allow users to manage their to-do list.",
         },
     },
-    apis: ["../routes/*.js"],
+    apis: [path.join(process.cwd(), "src/routes/**/*.js")],
 };
 
 const specs = swaggerJSDoc(options);
