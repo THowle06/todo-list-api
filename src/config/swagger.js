@@ -10,6 +10,20 @@ const options = {
             version: "1.0.0",
             description: "A RESTful API to allow users to manage their to-do list.",
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
     apis: [path.join(process.cwd(), "src/routes/**/*.js")],
 };
