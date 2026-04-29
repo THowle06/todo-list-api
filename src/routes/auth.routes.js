@@ -1,5 +1,5 @@
 import express from "express";
-import { register } from "../controllers/auth.controller.js";
+import { login, register } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
@@ -47,5 +47,46 @@ const router = express.Router();
  *              description: Email already exists
  */
 router.post("/register", register);
+
+/**
+ * @swagger
+ * /login:
+ *  post:
+ *      summary: Login a user
+ *      tags:
+ *          - Auth
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      required:
+ *                          - email
+ *                          - password
+ *                      properties:
+ *                          email:
+ *                              type: string
+ *                              example: john@doe.com
+ *                          password:
+ *                              type: string
+ *                              example: password
+ *      responses:
+ *          200:
+ *              description: User authenticated successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              token:
+ *                                  type: string
+ *                                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+ *          400:
+ *              description: Validation failed
+ *          401:
+ *              description: Invalid email or password
+ */
+router.post("/login", login);
 
 export default router;

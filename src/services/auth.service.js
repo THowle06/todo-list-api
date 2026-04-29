@@ -33,3 +33,31 @@ export async function registerUser({ name, email, password }) {
 
     return { token };
 }
+
+export async function loginUser({ email, password }) {
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        const error = new Error("Invalid email or password");
+        error.status = StatusCodes.UNAUTHORIZED;
+        throw error;
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordMatches) {
+        const error = new Error("Invalid email or password");
+        error.status = StatusCodes.UNAUTHORIZED;
+        throw error;
+    }
+
+    const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        jwtSecret,
+        { expiresIn: "7d" }
+    );
+
+    return { token };
+}
