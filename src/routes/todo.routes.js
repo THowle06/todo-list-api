@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middlewares/auth.js"
-import { createTodoHandler } from "../controllers/todo.controller.js";
+import { createTodoHandler, updateTodoHandler } from "../controllers/todo.controller.js";
 
 const router = express.Router();
 
@@ -35,5 +35,47 @@ const router = express.Router();
  *              description: Unauthorized
  */
 router.post("/todos", auth, createTodoHandler);
+
+/**
+ * @swagger
+ * /todos/{id}:
+ *  put:
+ *      summary: Update an existing todo item
+ *      tags:
+ *          - Todos
+ *      security:
+ *          - bearerAuth: []
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              type: integer
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      required:
+ *                          - title
+ *                      properties:
+ *                          title:
+ *                              type: string
+ *                              example: Buy groceries
+ *                          description:
+ *                              type: string
+ *                              example: Buy milk, eggs, bread, and cheese
+ *      responses:
+ *          200:
+ *              description: Todo updated successfully
+ *          401:
+ *              description: Unauthorized
+ *          403:
+ *              description: Forbidden
+ *          404:
+ *              description: Not Found
+ */
+router.put("/todos/:id", auth, updateTodoHandler);
 
 export default router;
