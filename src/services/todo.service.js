@@ -72,3 +72,31 @@ export async function deleteTodoForUser(todoId, userId) {
 
     return { status: "ok" };
 }
+
+export async function getTodosForUser(userId, { page, limit }) {
+    const skip = (page - 1) * limit;
+
+    const [todos, total] = await Promise.all([
+        prisma.todo.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+            },
+            skip,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+        }),
+        prisma.todo.count({
+            where: { userId },
+        }),
+    ]);
+
+    return {
+        data: todos,
+        page,
+        limit,
+        total,
+    };
+}

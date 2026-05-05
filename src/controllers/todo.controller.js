@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import { createTodo, deleteTodoForUser, updateTodoForUser } from "../services/todo.service.js";
-import { createTodoSchema, todoIdSchema, updateTodoSchema } from "../validators/todo.validators.js";
+import { createTodo, deleteTodoForUser, getTodosForUser, updateTodoForUser } from "../services/todo.service.js";
+import { createTodoSchema, paginationSchema, todoIdSchema, updateTodoSchema } from "../validators/todo.validators.js";
 
 export async function createTodoHandler(req, res, next) {
     try {
@@ -91,6 +91,26 @@ export async function deleteTodoHandler(req, res, next) {
         }
 
         return res.status(StatusCodes.NO_CONTENT).send();
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getTodosHandler(req, res, next) {
+    try {
+        const parsed = paginationSchema.safeParse(req.query);
+
+        if (!parsed.success) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Validation failed",
+                errors: parsed.error.flatten(),
+            });
+        }
+
+        const userId = req.user.userId;
+        const result = await getTodosForUser(userId, parsed.data);
+
+        res.status(StatusCodes.OK).json(result);
     } catch (error) {
         next(error);
     }
