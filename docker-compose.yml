@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -17,5 +19,26 @@ services:
       timeout: 5s
       retries: 10
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: todo-list-api:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: ${PORT:-3000}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://${DB_USER:-todo_user}:${DB_PASSWORD:-todo_pass}@postgres:${DB_PORT:-5432}/${DB_NAME:-todo_api}
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
 volumes:
   postgres_data:
+
+networks:
+  backend:
+    driver: bridge
