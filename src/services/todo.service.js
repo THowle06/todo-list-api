@@ -49,3 +49,26 @@ export async function updateTodoForUser(todoId, userId, { title, description }) 
 
     return { status: "ok", data: updatedTodo };
 }
+
+export async function deleteTodoForUser(todoId, userId) {
+    const existingTodo = await prisma.todo.findUnique({
+        where: { id: todoId },
+        select: {
+            userId: true,
+        },
+    });
+
+    if (!existingTodo) {
+        return { status: "not_found" };
+    }
+
+    if (existingTodo.userId !== userId) {
+        return { status: "forbidden" };
+    }
+
+    await prisma.todo.delete({
+        where: { id: todoId },
+    });
+
+    return { status: "ok" };
+}

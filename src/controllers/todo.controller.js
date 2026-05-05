@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { createTodo, updateTodoForUser } from "../services/todo.service.js";
+import { createTodo, deleteTodoForUser, updateTodoForUser } from "../services/todo.service.js";
 import { createTodoSchema, todoIdSchema, updateTodoSchema } from "../validators/todo.validators.js";
 
 export async function createTodoHandler(req, res, next) {
@@ -58,6 +58,39 @@ export async function updateTodoHandler(req, res, next) {
         }
 
         return res.status(StatusCodes.OK).json(result.data);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function deleteTodoHandler(req, res, next) {
+    try {
+        const parsedParams = todoIdSchema.safeParse(req.params);
+        if (!parsedParams.success) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Validation failed",
+                errors: parsedParams.error.flatten(),
+            });
+        }
+
+        const todoId = parsedParams.data.id;
+        const userId = req.user.userId;
+
+        const result = await deleteTodoForUser(todoId, userId);
+
+        if (result.status === "not_found") {
+            return res.status(StatusCodes.NOT_FOUND).json({
+                message: "Not Found",
+            });
+        }
+
+        if (result.status === "forbidden") {
+            return res.status(StatusCodes.FORBIDDEN).json({
+                message: "Forbidden",
+            });
+        }
+
+        return res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
         next(error);
     }

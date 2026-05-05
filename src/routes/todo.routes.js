@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middlewares/auth.js"
-import { createTodoHandler, updateTodoHandler } from "../controllers/todo.controller.js";
+import { createTodoHandler, updateTodoHandler, deleteTodoHandler } from "../controllers/todo.controller.js";
 
 const router = express.Router();
 
@@ -77,5 +77,32 @@ router.post("/todos", auth, createTodoHandler);
  *              description: Not Found
  */
 router.put("/todos/:id", auth, updateTodoHandler);
+
+/**
+ * @swagger
+ * /todos/{id}:
+ *  delete:
+ *      summary: Delete a todo item
+ *      tags:
+ *          - Todos
+ *      security:
+ *          - bearerAuth: []
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              type: integer
+ *      responses:
+ *          204:
+ *              description: Todo deleted successfully
+ *          401:
+ *              description: Unauthorized
+ *          403:
+ *              description: Forbidden
+ *          404:
+ *              description: Not Found
+ */
+router.delete("/todos/:id", auth, deleteTodoHandler);
 
 export default router;
