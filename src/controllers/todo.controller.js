@@ -40,7 +40,7 @@ export async function updateTodoHandler(req, res, next) {
             });
         }
 
-        const todoId = parsedBody.data.id;
+        const todoId = parsedParams.data.id;
         const userId = req.user.userId;
 
         const result = await updateTodoForUser(todoId, userId, parsedBody.data);
